@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Empleados - Consulta Pública</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- DataTables CSS -->
+  <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+  <!-- DataTables Buttons (para exportar) -->
+  <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" rel="stylesheet">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" type="image/png">
+
+  <style>
+    body {
+      padding: 30px;
+      background-color: #f8f9fa;
+    }
+    h1 {
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+	<div id="loader" class="text-center my-5">
+	  <div class="spinner-border text-primary" role="status">
+		<span class="visually-hidden">Cargando...</span>
+	  </div>
+	  <p class="mt-2">Cargando empleados...</p>
+	</div>
+  <h1 class="text-center">Lista Pública de Empleados</h1>
+  <div class="table-responsive" style="display:none;">
+    <table id="empleadosTable" class="display table table-bordered table-hover" style="width:100%">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Cargo</th>
+          <th>Edad</th>
+          <th>Fecha de Ingreso</th>
+          <th>Departamento</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<!-- DataTables Export Buttons -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const API_URL = "https://18ea2042ac63840351ab97ff810e9511.serveo.net/public/empleados";
+
+  $(document).ready(function () {
+  $('#loader').hide();
+  $('#empleadosTable').parents('.table-responsive').show();
+
+    fetch(API_URL)
+      .then(response => {
+        if (!response.ok) throw new Error("Error al obtener los datos");
+        return response.json();
+      })
+      .then(data => {
+        const table = $('#empleadosTable').DataTable({
+          data: data,
+          columns: [
+            { data: 'Id' },
+            { data: 'Nombre' },
+            { data: 'Cargo' },
+            { data: 'Edad' },
+            { data: 'FechaIngreso' },
+            { data: 'Departamento' }
+          ],
+          language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+          },
+          dom: 'Bfrtip',
+          buttons: ['copy', 'excel', 'print']
+        });
+      })
+      .catch(error => {
+        alert("No se pudieron cargar los datos.");
+        console.error(error);
+      });
+  });
+</script>
+
+</body>
+</html>
